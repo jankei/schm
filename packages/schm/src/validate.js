@@ -112,7 +112,7 @@ const validate = (
             if (isSchema) {
               return errors.push(...toArray(schemaErrors));
             }
-            return Promise.reject(errorObject);
+            return errorObject;
           });
           promises.push(promise);
         }
@@ -124,18 +124,10 @@ const validate = (
 
   mapValues(parsed, schema.params, transformValue, toArray(paramPathPrefix));
 
-  return Promise.all(promises).then(
-    () => {
-      if (errors.length) {
-        return Promise.reject(errors);
-      }
-      return parsed;
-    },
-    e => {
-      const allErrors = [].concat(errors, toArray(e));
-      return Promise.reject(allErrors);
-    }
-  );
+  if (errors.length) {
+    return errors;
+  }
+  return parsed;
 };
 
 export default validate;
